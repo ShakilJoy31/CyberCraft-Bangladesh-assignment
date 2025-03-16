@@ -287,11 +287,11 @@ export default function AdminDashboard({ data = {
         localStorage.removeItem("cybercraft-bangladesh");
 
         // Redirect to /dashboard/default
-        router.push("/login");
+        router.push("/admin-dashboard/logout");
 
         // Force a full page reload after redirecting
         setTimeout(() => {
-            window.location.href = "/login";
+            window.location.href = "/admin-dashboard/logout";
         }, 200);
     };
 
