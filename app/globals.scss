@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+    --primary: 24 9.8% 10%;
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 20 14.3% 4.1%;
+    --radius: 0.5rem;
+
+    --chart-1: 359 2% 40%;
+    --chart-2: 240 1% 74%;
+    --chart-3: 240 1% 58%;
+    --chart-4: 240 1% 42%;
+    --chart-5: 240 2% 26%;
+
+    --sidebar-width: 20rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply overflow-x-hidden bg-muted/70 text-foreground;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* The hospital */
+@keyframes smoothColorChange {
+  0% {
+    color: #ff0000; /* Red */
+  }
+  20% {
+    color: #ff7f00; /* Orange */
+  }
+  40% {
+    color: #DE3163; /* Yellow */
+  }
+  60% {
+    color: #00ffa6; /* Green */
+  }
+  80% {
+    color: #0000ff; /* Blue */
+  }
+  100% {
+    color: #ff00b3; /* Back to Red */
+  }
+}
+
+.navbar-heading {
+  animation: smoothColorChange 3s linear infinite;
+}
+
+.loader_global_template_2 {
+  width: 85px; /* Increase the size of loader */
+  aspect-ratio: 1;
+  display: grid;
+  border-radius: 50%;
+  background:
+    linear-gradient(0deg ,rgb(255 0 0 /50%) 30%,#0000 0 70%,rgb(255 0 0 /100%) 0) 50%/8% 100%,
+    linear-gradient(90deg,rgb(255 0 0 /25%) 30%,#0000 0 70%,rgb(255 0 0 /75%) 0) 50%/100% 8%;
+  background-repeat: no-repeat;
+  animation: l23 1s infinite steps(12);
+}
+
+.loader_global_template_2::before,
+.loader_global_template_2::after {
+   content: "";
+   grid-area: 1/1;
+   border-radius: 50%;
+   background: inherit;
+   opacity: 0.915;
+   transform: rotate(30deg);
+}
+
+.loader_global_template_2::after {
+   opacity: 0.83;
+   transform: rotate(60deg);
+}
+
+@keyframes l23 {
+  100% {transform: rotate(1turn)}
+}
+
+
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+
+@keyframes dim {
+  0%, 100% {
+    color: #ffffff; /* Tailwind's red-500 */
+  }
+  50% {
+    color: #eb2828; /* Tailwind's red-700 */
+  }
+}
+
+.animate-dim {
+  animation: dim 1.5s infinite;
+}
+
+
+
+
+
+
+
+
+
+// The animation effect
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(200px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-200px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInTop {
+  from {
+    opacity: 0;
+    transform: translateY(-200px); /* Move element up */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInBottom {
+  from {
+    opacity: 0;
+    transform: translateY(200px); /* Move element down */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-top {
+  animation: fadeInTop 1s ease-out forwards;
+  animation-delay: 100ms;
+}
+
+.fade-in-bottom {
+  animation: fadeInBottom 1s ease-out forwards;
+  animation-delay: 100ms; /* Add a slight delay */
+}
+
+.fade-in-right {
+  animation: fadeInRight 1s ease-out forwards;
+  animation-delay: 100ms; /* Add a slight delay */
+}
+
+.fade-in-left {
+  animation: fadeInLeft 1s ease-out forwards;
+  animation-delay: 100ms; /* Add a slight delay */
+}
