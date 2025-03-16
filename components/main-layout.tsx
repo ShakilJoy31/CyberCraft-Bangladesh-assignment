@@ -1,7 +1,5 @@
 "use client";
 
-import Sidebar from "./layout/sidebar";
-import Header from "./layout/header";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -36,21 +34,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      <div className="flex h-screen">
-        <div className={`${isLoading ? 'bg-black bg-opacity-50' : ''}`}>
-          {isUser && <Sidebar handleNavigation={handleNavigation} />}
-        </div>
-        <div className={`w-full ${isUser ? 'lg:ps-[--sidebar-width]' : ''}`}>
-          {isUser && <Header handleNavigation={handleNavigation} />}
-          <main className={cn(`min-h-full ${isUser && 'p-4'}`)}>
-            {isLoading && <PageLoader></PageLoader>}
-            <RolePermissionsProvider>
-              {children}
-            </RolePermissionsProvider>
-          </main>
-        </div>
-        <ScrollToTopButton />
-      </div>
+      <main className={cn(`min-h-full ${isUser && 'p-4'}`)}>
+        {isLoading && <PageLoader></PageLoader>}
+        <RolePermissionsProvider>
+          {children}
+        </RolePermissionsProvider>
+      </main>
     </>
   );
 }
