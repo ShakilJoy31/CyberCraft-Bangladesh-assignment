@@ -13,10 +13,29 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-    const [data] = await Promise.all([getDataFromServer("/api/v1/CyberCraft-Bangladesh-assignment/get-contact-information?page=1&limit=10")]);
+    let data;
+    try {
+        const response = await getDataFromServer("/api/v1/CyberCraft-Bangladesh-assignment/get-contact-information?page=1&limit=10");
+        if (!response || !response.pagination || !response.data) {
+            throw new Error("Invalid data structure");
+        }
+        data = response;
+    } catch (error) {
+        console.error("Failed to fetch data:", error);
+        data = { 
+            status: "error", 
+            data: [], 
+            pagination: { 
+                total: 0, 
+                totalPages: 1, 
+                currentPage: 1, 
+                currentLimit: 10 
+            } 
+        }; // Fallback data
+    }
 
     return (
-     <AdminDashboard data={data}></AdminDashboard>
-    )
+        <AdminDashboard data={data}></AdminDashboard>
+    );
 }
 

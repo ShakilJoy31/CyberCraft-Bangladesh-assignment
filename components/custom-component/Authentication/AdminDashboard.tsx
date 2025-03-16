@@ -46,7 +46,16 @@ interface ApiResponse {
     pagination: Pagination;
 }
 
-export default function AdminDashboard({ data }: { data: ApiResponse }) {
+export default function AdminDashboard({ data = { 
+    status: "error", 
+    data: [], 
+    pagination: { 
+        total: 0, 
+        totalPages: 1, 
+        currentPage: 1, 
+        currentLimit: 10 
+    } 
+} }: { data: ApiResponse }) {
     const [currentPage, setCurrentPage] = useState(data.pagination.currentPage);
     const [tableData, setTableData] = useState(data.data);
     const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +68,7 @@ export default function AdminDashboard({ data }: { data: ApiResponse }) {
         if (!storedUserData) {
             router.push("/login");
         }
-    }, []);
+    }, [router]);
 
     // Fetch data for pagination
     const fetchData = async (page: number) => {
