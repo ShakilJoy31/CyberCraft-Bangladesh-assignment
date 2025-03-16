@@ -46,6 +46,22 @@ interface ApiResponse {
     pagination: Pagination;
 }
 
+// Utility function to highlight matching text
+const highlightText = (text: string, query: string) => {
+    if (!query) return text;
+
+    const regex = new RegExp(`(${query})`, "gi");
+    return text.split(regex).map((part, index) =>
+        regex.test(part) ? (
+            <span key={index} style={{ backgroundColor: "yellow" }}>
+                {part}
+            </span>
+        ) : (
+            part
+        )
+    );
+};
+
 export default function AdminDashboard({ data = { 
     status: "error", 
     data: [], 
@@ -61,6 +77,7 @@ export default function AdminDashboard({ data = {
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [deleteService, setDeleteService] = useState<boolean | null>(false);
+    const [selectedRows, setSelectedRows] = useState<string[]>([]);
     const router = useRouter();
 
     useEffect(() => {
@@ -92,9 +109,62 @@ export default function AdminDashboard({ data = {
         user.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    // Handle row selection
+    const handleRowSelect = (id: string) => {
+        setSelectedRows((prev) =>
+            prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
+        );
+    };
+
+    // Handle bulk delete
+    const handleBulkDelete = async () => {
+        try {
+            await Promise.all(
+                selectedRows.map((id) =>
+                    fetch(`${getBaseURL()}/api/v1/CyberCraft-Bangladesh-assignment/delete-contact/${id}`, {
+                        method: "DELETE",
+                    })
+                )
+            );
+            toastShowing("Deleted successfully!", "top-center", 2500, "black", "white");
+            setTableData(tableData.filter((item) => !selectedRows.includes(item._id)));
+            setSelectedRows([]);
+        } catch (error) {
+            toast.error("Failed to delete");
+        }
+    };
+
+    // Handle bulk download
+    const handleBulkDownload = () => {
+        const doc = new jsPDF();
+        selectedRows.forEach((id, index) => {
+            const user = tableData.find((item) => item._id === id);
+            if (user) {
+                if (index > 0) doc.addPage();
+                doc.text(`User Information: ${user.name}`, 10, 10);
+                doc.text(`Name: ${user.name}`, 10, 20);
+                doc.text(`Email: ${user.email}`, 10, 30);
+                doc.text(`Message: ${user.message}`, 10, 40);
+                doc.text(`Created At: ${new Date(user.createdAt).toLocaleString()}`, 10, 50);
+            }
+        });
+        doc.save("selected_users_information.pdf");
+        toastShowing(`Downloaded selected users' information as PDF`, "top-center", 2500, "black", "white");
+    };
+
     // Define columns for the table
     const columns = [
-
+        {
+            key: "select",
+            header: "",
+            render: (row: Message) => (
+                <input
+                    type="checkbox"
+                    checked={selectedRows.includes(row._id)}
+                    onChange={() => handleRowSelect(row._id)}
+                />
+            ),
+        },
         {
             key: "_id",
             header: "ID",
@@ -102,14 +172,17 @@ export default function AdminDashboard({ data = {
         {
             key: "name",
             header: "Name",
+            render: (row: Message) => highlightText(row.name, searchQuery),
         },
         {
             key: "email",
             header: "Email",
+            render: (row: Message) => highlightText(row.email, searchQuery),
         },
         {
             key: "message",
             header: "Message",
+            render: (row: Message) => highlightText(row.message, searchQuery),
         },
         {
             key: "createdAt",
@@ -156,10 +229,9 @@ export default function AdminDashboard({ data = {
         toastShowing(`Downloaded ${user.name}'s information as PDF`, "top-center", 2500, "black", "white");
     };
 
-
     // Handle view action
     const handleView = (row: Message) => {
-        router.push(`/admin-dashboard/${row._id}`)
+        router.push(`/admin-dashboard/${row._id}`);
     };
 
     // Handle delete action
@@ -212,7 +284,7 @@ export default function AdminDashboard({ data = {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("cybercraft-bangladesh")
+        localStorage.removeItem("cybercraft-bangladesh");
 
         // Redirect to /dashboard/default
         router.push("/login");
@@ -242,7 +314,7 @@ export default function AdminDashboard({ data = {
                 <button onClick={handleLogout} className="font-medium text-white bg-red-600 rounded-md w-32 hover:bg-white border hover:border-red-600 hover:text-black py-1">Yes</button>
             </div>
         </div>
-    </motion.div>
+    </motion.div>;
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -300,14 +372,31 @@ export default function AdminDashboard({ data = {
                             width={32}
                             height={32}
                             className="w-12 h-12 hover:cursor-pointer"
-
                         />
                         <Image src={btn2} alt="Button 2" width={32} height={32} className="w-12 h-12" />
                         <Image src={btn3} alt="Button 3" width={32} height={32} className="w-12 h-12" />
-                        <Image onClick={()=> router.push("/sign-up")} src={btn4} alt="Button 4" width={32} height={32} className="w-12 h-12 hover:cursor-pointer" />
+                        <Image onClick={() => router.push("/sign-up")} src={btn4} alt="Button 4" width={32} height={32} className="w-12 h-12 hover:cursor-pointer" />
                         <span><IoLogOut onClick={() => setDeleteService(true)} className="w-12 h-12 hover:cursor-pointer"></IoLogOut></span>
                     </div>
                 </div>
+
+                {/* Bulk Actions */}
+                {selectedRows.length > 0 && (
+                    <div className="flex justify-end gap-x-4 items-center m-4">
+                        <button
+                            onClick={handleBulkDelete}
+                            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
+                        >
+                            Delete Selected
+                        </button>
+                        <button
+                            onClick={handleBulkDownload}
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                        >
+                            Download Selected
+                        </button>
+                    </div>
+                )}
 
                 {/* Table Section */}
                 <div className="bg-white rounded-lg shadow-md p-6 mx-4">

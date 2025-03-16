@@ -38,10 +38,10 @@ export default function Contact() {
             });
 
             if (response.status === 200 || response.status === 201) {
-                toastShowing("Message sent successfully!", "top-center", 2500, "white", "black");
-                setName("");
-                setEmail("");
-                setMessage("");
+                toastShowing("Message sent successfully!", "top-center", 2500, "black", "white");
+                // setName("");
+                // setEmail("");
+                // setMessage("");
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
